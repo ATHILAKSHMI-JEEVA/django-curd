@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "myadmin",
     "accounts",
+    "Admin",
     "rest_framework.authtoken",
 ]
 

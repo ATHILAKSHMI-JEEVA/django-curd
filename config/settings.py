@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "users",
     "rest_framework",
     "Admin",
+    "app",
     "rest_framework.authtoken",
 ]
 

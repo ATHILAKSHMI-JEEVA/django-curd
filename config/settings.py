@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "Admin",
     "app",
+    "students",
     "rest_framework.authtoken",
+    "employee",
 ]
 
 MIDDLEWARE = [

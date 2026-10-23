@@ -10,4 +10,6 @@ urlpatterns = [
     path("admins/create/", admin_post),
     path("admins/delete/<int:id>/", admin_delete),
     path("admins/update/<int:id>/", admin_update)
+
+    
 ]

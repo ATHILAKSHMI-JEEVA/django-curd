@@ -23,5 +23,6 @@ urlpatterns = [
     path('api/', include("app.urls")),
     path('api/', include("students.urls")),
     path('api/',include("employee.urls")),
+    path('api/',include("cloud.urls"))
 
 ]

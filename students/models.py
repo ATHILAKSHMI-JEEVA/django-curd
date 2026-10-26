@@ -6,8 +6,8 @@ class Student(models.Model):
     native=models.CharField(max_length=100)
     photo=models.BinaryField(null=True,blank=True)
 
-def __str__(self):
-    return self.name
+    def __str__(self):
+      return self.name
 
 
 #BinaryField is used to store binary data in the db.

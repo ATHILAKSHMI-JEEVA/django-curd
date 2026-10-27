@@ -59,6 +59,8 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "employee",
     "cloud",
+    "rbca",
+    
     
 ]
 
@@ -165,3 +167,4 @@ STORAGES = {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
+

@@ -23,6 +23,8 @@ urlpatterns = [
     path('api/', include("app.urls")),
     path('api/', include("students.urls")),
     path('api/',include("employee.urls")),
-    path('api/',include("cloud.urls"))
+    path('api/',include("cloud.urls")),
+    path('admin/',admin.site.urls),
+    path('api/',include("rbca.urls")),
 
 ]

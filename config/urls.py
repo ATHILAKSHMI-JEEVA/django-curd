@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
+    path("api/rbca-dy/", include("rbca_dy.urls")),
     path('api/', include("users.urls")),
     path('api/', include("Admin.urls")),
     path('api/', include("app.urls")),
@@ -26,5 +27,6 @@ urlpatterns = [
     path('api/',include("cloud.urls")),
     path('admin/',admin.site.urls),
     path('api/',include("rbca.urls")),
+    
 
 ]

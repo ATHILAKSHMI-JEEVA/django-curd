@@ -14,14 +14,6 @@ urlpatterns=[
     path("manager-files/", manager_files, name="manager_files"),
     path("my-files/<int:file_id>/delete/", delete_my_file, name="delete_my_file"),
     path("admin-files/<int:file_id>/delete/", admin_delete_file, name="admin_delete_file"),
-   path(
-    "manager-files/<int:file_id>/delete/",
-    manager_delete_file,
-    name="manager_delete_file"
-),
-path(
-    "admin-files/<int:file_id>/download/",
-    admin_download_file,
-    name="admin_download_file"
-),
+    path("manager-files/<int:file_id>/delete/",manager_delete_file,name="manager_delete_file"),
+    path("admin_files/<int:file_id>/download/",admin_download_file,name="admin_download_file"),
 ]

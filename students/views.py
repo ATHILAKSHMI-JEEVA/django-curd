@@ -55,9 +55,6 @@ def get_student_photo(request, student_id):
 
 
 
-
-
-
 @api_view(["PUT"])
 def update_student(request, student_id):
     student = get_object_or_404(Student, id=student_id)

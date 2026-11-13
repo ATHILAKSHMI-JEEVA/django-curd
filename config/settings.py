@@ -61,8 +61,10 @@ INSTALLED_APPS = [
     "cloud",
     "rbca",
     "rbca_dy",
+    "accounts",
+    "task_management",
     
- 
+    
 ]
 
 MIDDLEWARE = [
@@ -174,3 +176,9 @@ STORAGES = {
     },
 }
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+     
+}

@@ -247,9 +247,14 @@ def create_client(request):
 
 
     try:
-       user_role = Role.objects.get(id=role_id)
+        user_role = Role.objects.get(id=role_id)
     except Role.DoesNotExist:
        return Response({"error": "Role not found"}, status=404)
+
+    if user_role.role_name == "admin":
+        return Response({
+        "error": "Cannot create another Admin user"
+    }, status=403)
 
     new_user = CustomUser(
     username=username,
@@ -399,8 +404,24 @@ def delete_client(request, user_id):
     }, status=200)
 
 
+
 @api_view(["POST"])
 def create_status(request):
+
+    token = request.headers.get("Authorization")
+
+    if not token:
+        return Response({"error": "Token required"}, status=401)
+
+    token = token.replace("Bearer ", "")
+
+    current_user = get_user_from_token(token)
+
+    if not current_user:
+        return Response({"error": "Invalid token"}, status=401)
+
+    if not has_permission(current_user, "create_status"):
+        return Response({"error": "Permission denied"}, status=403)
 
     status_name = request.data.get("status_name")
 
@@ -425,6 +446,7 @@ def create_status(request):
         "status_id": status.id,
         "status_name": status.status_name
     }, status=201)
+
 
 @api_view(["POST"])
 def create_task(request):
@@ -499,6 +521,9 @@ def view_tasks(request):
 
     tasks = Task.objects.all()
 
+    if current_user.role.role_name.lower() != "admin":
+       tasks = Task.objects.filter(assigned_to=current_user)
+
     data = []
 
     for task in tasks:
@@ -516,6 +541,7 @@ def view_tasks(request):
         "message": "Tasks retrieved successfully",
         "tasks": data
     }, status=200)
+
 
 @api_view(["PUT"])
 def update_task(request, task_id):
@@ -561,33 +587,34 @@ def update_task(request, task_id):
 
     if status_id:
         try:
-           task_status = TaskStatus.objects.get(id=status_id)
+            task_status = TaskStatus.objects.get(id=status_id)
         except TaskStatus.DoesNotExist:
-           return Response({"error": "Status not found"}, status=404)
+            return Response({"error": "Status not found"}, status=404)
 
-    old_status = task.status
+        old_status = task.status
 
-    if old_status.id != task_status.id:
+        if old_status.id != task_status.id:
 
-        task.status = task_status
+            task.status = task_status
 
-        TaskHistory.objects.create(
-            task=task,
-            old_status=old_status,
-            new_status=task_status,
-            changed_by=current_user
-        )
+            TaskHistory.objects.create(
+                task=task,
+                old_status=old_status,
+                new_status=task_status,
+                changed_by=current_user
+            )
 
     task.save()
 
     return Response({
-    "message": "Task updated successfully",
-    "task_id": task.id,
-    "title": task.title,
-    "description": task.description,
-    "assigned_to": task.assigned_to.username,
-    "status": task.status.status_name
-}, status=200)
+        "message": "Task updated successfully",
+        "task_id": task.id,
+        "title": task.title,
+        "description": task.description,
+        "assigned_to": task.assigned_to.username,
+        "status": task.status.status_name
+    }, status=200)
+
 
 @api_view(["DELETE"])
 def delete_task(request, task_id):
@@ -858,6 +885,8 @@ def search_tasks(request):
     search = request.query_params.get("search")
 
     tasks = Task.objects.filter(title=search)
+    if current_user.role.role_name.lower() != "admin":
+       tasks = tasks.filter(assigned_to=current_user)
 
     data = []
 

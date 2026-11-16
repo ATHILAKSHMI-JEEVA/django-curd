@@ -5,15 +5,14 @@ from django.shortcuts import get_object_or_404
 from .models import Student
 
 
-
-
 @api_view(["POST"])
 def create_student(request):
     photo = request.FILES.get("photo")
 
-    student =Student.objects.create(
+    student =Student.objects.create(    
         name=request.data.get("name"),
         age=request.data.get("age"),
+
         native=request.data.get("native"),
         photo=photo.read() if photo else None
     )

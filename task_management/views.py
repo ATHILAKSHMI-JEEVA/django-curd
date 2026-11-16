@@ -1,5 +1,6 @@
 from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
+from drf_spectacular.utils import extend_schema, OpenApiExample
 from rest_framework.response import Response
 from .models import TaskHistory
 from django.core.paginator import Paginator
@@ -41,6 +42,26 @@ def register_user(request):
         "username": user.username,
         "role": user.role,
     }, status=201)
+@extend_schema(
+    request={
+        "application/json": {
+            "type": "object",
+            "properties": {
+                "username": {"type": "string"},
+                "password": {"type": "string"}
+            },
+            "required": ["username", "password"]
+        }
+    },
+    responses={
+        200: {"description": "Login successful"},
+        400: {"description": "Username and password required"},
+        401: {"description": "Invalid username or password"},
+        403: {"description": "Account inactive"}
+    }
+)
+
+ 
 
 @api_view(["POST"])
 def login_user(request):
@@ -133,6 +154,27 @@ def create_admin(request):
         "username":admin.username,
         "role":admin.role
     },status=201)
+
+@extend_schema(
+    request={
+        "application/json": {
+            "type": "object",
+            "properties": {
+                "username": {"type": "string"},
+                "email": {"type": "string"},
+                "password": {"type": "string"}
+            },
+            "required": ["username", "email", "password"]
+        }
+    },
+    responses={
+        201: {"description": "Client created successfully"},
+        400: {"description": "Required fields missing or duplicate username/email"},
+        401: {"description": "Invalid token or user not found"},
+        403: {"description": "Admin access required"}
+    }
+)
+
 
 @api_view(["POST"])
 def create_client(request):

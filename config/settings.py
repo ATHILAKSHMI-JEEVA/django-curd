@@ -62,7 +62,9 @@ INSTALLED_APPS = [
     "rbca",
     "rbca_dy",
     "accounts",
-    "task_management",
+    'drf_spectacular',
+    "admin_client",
+    
     
     
 ]
@@ -180,5 +182,25 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-     
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Task Management System API',
+    'DESCRIPTION': 'API documentation for Admin and Client panels',
+    'VERSION': '1.0.0',
+
+    'COMPONENTS': {
+        'securitySchemes': {
+            'BearerAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            }
+        }
+    },
+
+    'SECURITY': [
+        {'BearerAuth': []}
+    ],
 }

@@ -22,13 +22,11 @@ urlpatterns = [
     path("client/task/update-status/<int:task_id>/", views.client_update_task_status),
     path("task/history/<int:task_id>/", views.view_task_history),
     path("client/dashboard/", views.client_dashboard),
-    path(
-    "client/task/upload-proof/<int:task_id>/",
-    views.upload_task_proof
-),
+    path("client/task/upload-proof/<int:task_id>/",views.upload_task_proof),
     path("client/tasks/search/", views.search_tasks, name="search_tasks"),
     path("admin/task/filter/", views.filter_tasks),
     path("admin/task/pagination/", views.pagination_tasks),
     path("admin/dashboard/", views.admin_dashboard),
-    
+    path("admin/update_admin/<int:user_id>/", views.update_admin, name="update_admin"),
+    path("admin/delete_admin/<int:user_id>/", views.delete_admin),
 ]

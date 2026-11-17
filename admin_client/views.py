@@ -342,11 +342,19 @@ def update_client(request, user_id):
     except CustomUser.DoesNotExist:
         return Response({"error": "User not found"}, status=404)
 
+    if current_user.id != user.id:
+        return Response({"error": "update only your own details"}, status=403)
+
+
+    if not has_permission(user,"client_account"):
+        return Response({
+            "error":"client account only updated"
+        },status=403)
+
     username = request.data.get("username")
     email = request.data.get("email")
     password = request.data.get("password")
-    role_id = request.data.get("role_id")
-
+    
     if username:
         user.username = username
 
@@ -356,13 +364,6 @@ def update_client(request, user_id):
     if password:
         user.set_password(password)
 
-    if role_id:
-        try:
-            role = Role.objects.get(id=role_id)
-        except Role.DoesNotExist:
-            return Response({"error": "Role not found"}, status=404)
-
-        user.role = role
 
     user.save()
 
@@ -388,6 +389,7 @@ def delete_client(request, user_id):
 
     if not current_user:
         return Response({"error": "Invalid token"}, status=401)
+    
 
     if not has_permission(current_user, "delete_client"):
         return Response({"error": "Permission denied"}, status=403)
@@ -396,6 +398,17 @@ def delete_client(request, user_id):
         user = CustomUser.objects.get(id=user_id)
     except CustomUser.DoesNotExist:
         return Response({"error": "User not found"}, status=404)
+
+    if current_user.id != user.id:
+        if not has_permission(current_user, "delete_client"):
+           return Response({
+            "error": "cannot delete another client details"
+        }, status=403)
+
+    if not has_permission(user, "client_account"):
+        return Response({
+         "error": "client account only deleted"
+    }, status=403)
 
     user.delete()
 
@@ -1012,4 +1025,97 @@ def admin_dashboard(request):
         "total_tasks": total_tasks,
         "pending_tasks": pending_tasks,
         "completed_tasks": completed_tasks
+    }, status=200)
+
+
+@api_view(["PUT"])
+def update_admin(request, user_id):
+
+    token = request.headers.get("Authorization")
+
+    if not token:
+        return Response({"error": "Token required"}, status=401)
+
+    token = token.replace("Bearer ", "")
+
+    current_user = get_user_from_token(token)
+
+    if not current_user:
+        return Response({"error": "Invalid token"}, status=401)
+
+    
+    if not has_permission(current_user, "update_admin"):
+        return Response({"error": "Permission denied"}, status=403)
+
+    
+    try:
+        user = CustomUser.objects.get(id=user_id)
+    except CustomUser.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+
+  
+    if not has_permission(user, "admin_account"):
+        return Response({
+            "error": "Only admin accounts can be updated here"
+        }, status=403)
+
+    username = request.data.get("username")
+    email = request.data.get("email")
+    password = request.data.get("password")
+
+    if username:
+        user.username = username
+
+    if email:
+        user.email = email
+
+    if password:
+        user.set_password(password)
+
+    user.save()
+
+    return Response({
+        "message": "Admin updated successfully",
+        "user_id": user.id,
+        "username": user.username,
+        "email": user.email,
+        "role": user.role.role_name
+    }, status=200)
+
+
+@api_view(["DELETE"])
+def delete_admin(request, user_id):
+
+    token = request.headers.get("Authorization")
+
+    if not token:
+        return Response({"error": "Token required"}, status=401)
+
+    token = token.replace("Bearer ", "")
+
+    current_user = get_user_from_token(token)
+
+    if not current_user:
+        return Response({"error": "Invalid token"}, status=401)
+
+    
+    if not has_permission(current_user, "delete_admin"):
+        return Response({"error": "Permission denied"}, status=403)
+
+   
+    try:
+        user = CustomUser.objects.get(id=user_id)
+    except CustomUser.DoesNotExist:
+        return Response({"error": "User not found"}, status=404)
+
+   
+    if not has_permission(user, "admin_account"):
+        return Response({
+            "error": "Only admin accounts can be deleted here"
+        }, status=403)
+
+    user.delete()
+
+    return Response({
+        "message": "Admin deleted successfully"
     }, status=200)
